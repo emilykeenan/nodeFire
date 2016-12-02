@@ -3,10 +3,14 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
   var auth = $firebaseAuth();
   var self = this;
 
+  self.newUser = {};
+  self.newUserOptions = [];
+
   // This code runs whenever the user logs in
   self.logIn = function(){
     auth.$signInWithPopup("google").then(function(firebaseUser) {
       console.log("Firebase Authenticated as: ", firebaseUser.user.displayName);
+      console.log(firebaseUser.user);
     }).catch(function(error) {
       console.log("Authentication failed: ", error);
     });
@@ -29,6 +33,9 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
           }
         }).then(function(response){
           self.secretData = response.data;
+          for (var i = 0; i < self.secretData.length; i++) {
+            self.newUserOptions.push(i + 1);
+          }
         });
       });
     } else {
@@ -38,10 +45,30 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
 
   });
 
+  self.addUser = function() {
+    console.log('add person', self.newUser);
+
+    if(firebaseUser) {
+      firebaseUser.getToken().then(function(idToken) {
+        $http({
+          method: 'POST',
+          url: '/privateData',
+          headers: {
+            id_token: idToken
+          }
+        }).then(function(response) {
+          self.newUser = {};
+        });
+      });
+    } else {
+      console.log('Not able to add a new user.');
+    }
+  };
+
   // This code runs when the user logs out
   self.logOut = function(){
     auth.$signOut().then(function(){
       console.log('Logging the user out!');
     });
   };
-});
+}); // end of controller
