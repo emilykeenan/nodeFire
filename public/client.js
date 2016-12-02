@@ -60,6 +60,7 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
             id_token: idToken
           }
         }).then(function(response) {
+          alert('New user added!');
           self.newUser = {};
         });
       });
