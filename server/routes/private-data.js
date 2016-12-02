@@ -34,7 +34,7 @@ router.get("/", function(req, res){
 
 router.post("/", function(req, res) {
   var newUser = new User(req.body);
-
+  console.log(req.decodedToken.clearanceLevel);
 
   newUser.save(function(err) {
     if(err) {

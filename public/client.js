@@ -2,6 +2,7 @@ var app = angular.module("sampleApp", ["firebase"]);
 app.controller("SampleCtrl", function($firebaseAuth, $http) {
   var auth = $firebaseAuth();
   var self = this;
+  var currentUser = null;
 
   self.newUser = {};
   self.newUserOptions = [];
@@ -22,6 +23,7 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
   // the same things in the login and the logout code
   auth.$onAuthStateChanged(function(firebaseUser){
     // firebaseUser will be null if not logged in
+    currentUser = firebaseUser;
     if(firebaseUser) {
       // This is where we make our call to our server
       firebaseUser.getToken().then(function(idToken){
@@ -47,12 +49,13 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
 
   self.addUser = function() {
     console.log('add person', self.newUser);
-
-    if(firebaseUser) {
-      firebaseUser.getToken().then(function(idToken) {
+    newUser = self.newUser;
+    if(currentUser) {
+      currentUser.getToken().then(function(idToken) {
         $http({
           method: 'POST',
           url: '/privateData',
+          data: newUser,
           headers: {
             id_token: idToken
           }
