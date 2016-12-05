@@ -34,6 +34,7 @@ app.controller("SampleCtrl", function($firebaseAuth, $http) {
             id_token: idToken
           }
         }).then(function(response){
+          self.newUserOptions = [];
           self.secretData = response.data;
           for (var i = 0; i < self.secretData.length; i++) {
             self.newUserOptions.push(i + 1);
